@@ -93,6 +93,9 @@ function update() {
         fallingObjects.splice(i, 1);
         score++;
         scoreDisplay.textContent = `Score: ${score}`;
+        character.width += 10; // Increase character width
+        character.height += 10; // Increase character height
+        character.y = canvas.height - character.height - 10; // Adjust y position to keep character anchored at the bottom
         i--;
         continue;
       }
