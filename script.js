@@ -85,18 +85,17 @@ function update() {
       obj.y < character.y + character.height &&
       obj.y + obj.height > character.y
     ) {
-      fallingObjects.splice(i, 1);
       if (obj.isBad) {
-        score--;
-      } else {
-        score++;
-      }
-      scoreDisplay.textContent = `Score: ${score}`;
-      if (score < 0) {
         gameOver = true;
+        scoreDisplay.textContent = `Score: ${score}`;
+        break;
+      } else {
+        fallingObjects.splice(i, 1);
+        score++;
+        scoreDisplay.textContent = `Score: ${score}`;
+        i--;
+        continue;
       }
-      i--;
-      continue;
     }
 
     // Remove objects that fall off the screen
@@ -159,6 +158,22 @@ canvas.addEventListener("touchmove", (e) => {
 canvas.addEventListener("touchend", () => {
   character.isDragging = false;
 });
+
+document.addEventListener(
+  "touchmove",
+  function (event) {
+    event.preventDefault();
+  },
+  { passive: false }
+);
+
+document.addEventListener(
+  "mousemove",
+  function (event) {
+    event.preventDefault();
+  },
+  { passive: false }
+);
 
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
