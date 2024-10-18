@@ -29,6 +29,8 @@ images.bad[1].src = "img/cops2.png";
 images.good[0].src = "img/friedchicken.png";
 images.good[1].src = "img/watermealon.png";
 
+const originalCharacterSize = { width: 100, height: 100 };
+
 function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
@@ -43,10 +45,11 @@ function createFallingObject() {
     ? images.bad[Math.floor(Math.random() * images.bad.length)]
     : images.good[Math.floor(Math.random() * images.good.length)];
   const size = isBad ? badObjectSize : goodObjectSize;
+  const aspectRatio = image.width / image.height;
   fallingObjects.push({
     x,
     y: 0,
-    width: size,
+    width: size * aspectRatio,
     height: size,
     image,
     isBad,
@@ -93,8 +96,19 @@ function update() {
         fallingObjects.splice(i, 1);
         score++;
         scoreDisplay.textContent = `Score: ${score}`;
-        character.width += 10; // Increase character width
-        character.height += 10; // Increase character height
+        if (obj.image.src.includes("friedchicken.png")) {
+          character.width += 10; // Increase character width
+          character.height += 10; // Increase character height
+        } else if (obj.image.src.includes("watermealon.png")) {
+          character.width = Math.max(
+            originalCharacterSize.width,
+            character.width - 10
+          ); // Decrease character width
+          character.height = Math.max(
+            originalCharacterSize.height,
+            character.height - 10
+          ); // Decrease character height
+        }
         character.y = canvas.height - character.height - 10; // Adjust y position to keep character anchored at the bottom
         i--;
         continue;
@@ -109,10 +123,7 @@ function update() {
     }
 
     // Draw the object with its original aspect ratio
-    const aspectRatio = obj.image.width / obj.image.height;
-    const drawWidth = obj.width * aspectRatio;
-    const drawHeight = obj.height;
-    ctx.drawImage(obj.image, obj.x, obj.y, drawWidth, drawHeight);
+    ctx.drawImage(obj.image, obj.x, obj.y, obj.width, obj.height);
   }
 
   requestAnimationFrame(update);
